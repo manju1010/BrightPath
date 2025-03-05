@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 
 const AttendanceSchema = new mongoose.Schema({
-  studentId: { type: Number, required: true },
+  regno: { type: Number, required: true },
   grade: { type: String, required: true },
-  month: { type: String, required: true },
-  date: { type: Number, required: true },
-  present: { type: Boolean, default: false },
+  section: { type: String, required: true },
+  date: { type: String, required: true },
+  absent: { type: Boolean, default: false },
 });
 
 

@@ -26,7 +26,7 @@ const SideBar = () => {
                     <FontAwesomeIcon icon={faHome} className="mr-3" />
                     Dashboard
                   </li>
-                  <li onClick={()=> navigate('/studentDetails')} className="flex items-center p-3 mb-2 rounded-lg cursor-pointer hover:bg-blue-100 hover:text-blue-600">
+                  <li onClick={()=> navigate('/add-button')} className="flex items-center p-3 mb-2 rounded-lg cursor-pointer hover:bg-blue-100 hover:text-blue-600">
                     <FontAwesomeIcon icon={faUsers} className="mr-3" />
                     Add Students
                   </li>
@@ -47,11 +47,19 @@ const SideBar = () => {
                     SocialMedia Predict
                   </li>
 
-                  <li onClick={()=> navigate('/student-predict')} className="flex items-center p-3 mb-2 rounded-lg cursor-pointer hover:bg-blue-100 hover:text-blue-600">
+                  <li onClick={()=> navigate('/dropout-prediction')} className="flex items-center p-3 mb-2 rounded-lg cursor-pointer hover:bg-blue-100 hover:text-blue-600">
                     <FontAwesomeIcon icon={faUsers} className="mr-3" />
                    Academic Predict 
                   </li>
 
+                  <li onClick={()=> navigate('/student-all-prediction')} className="flex items-center p-3 mb-2 rounded-lg cursor-pointer hover:bg-blue-100 hover:text-blue-600">
+                    <FontAwesomeIcon icon={faUsers} className="mr-3" />
+                  Prediction
+                  </li>
+                  <li onClick={()=> navigate('/upload-excel-file')} className="flex items-center p-3 mb-2 rounded-lg cursor-pointer hover:bg-blue-100 hover:text-blue-600">
+                    <FontAwesomeIcon icon={faUsers} className="mr-3" />
+                   Excel-file upload 
+                  </li>
                 </ul>
               </nav>
             </aside>

@@ -15,6 +15,10 @@ import DropoutPrediction from './components/DroupoutPrediction';
 import SocialMediaPredict from './pages/SocialMediaPredict';
 import Academic from './pages/Academic';
 import StudentPrediction from './pages/StudentPrediction';
+import Prediction from './pages/Prediction';
+import { FaFileUpload } from 'react-icons/fa';
+import FileUpload from './components/FileUpload';
+import AddButton from './pages/AddButton';
 
 const App = () => {
   const { aToken } = useContext(AdminContext);
@@ -28,6 +32,7 @@ const App = () => {
           {/* Authenticated Routes */}
           <Routes>
             <Route path="/adminPanel" element={<AdminPanel />} />
+            <Route path="/add-button" element={<AddButton />} />
             <Route path="/studentAdmin" element={<StudentAdmin />} />
             <Route path="/studentDetails" element={<StudentDetails />} />
             <Route path="/studentMarks" element={<StudentMarks />} />
@@ -36,6 +41,10 @@ const App = () => {
             <Route path='/social-media-predict' element={<SocialMediaPredict /> } />
             <Route path='/academic-predict' element={<Academic /> } />
             <Route path='/student-predict' element={<StudentPrediction /> } />
+            <Route path='/student-all-prediction' element={<Prediction /> } />
+            <Route path='/upload-excel-file' element={<FileUpload /> } />
+           
+          
             <Route path="*" element={<Navigate to="/adminPanel" />} />
           </Routes>
         </div>

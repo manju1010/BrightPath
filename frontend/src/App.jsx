@@ -11,6 +11,8 @@ import SemesterResult from './pages/SemesterResult';
 import Announcement from './pages/Announcement';
 import Feedback from './pages/Feedback';
 import { ParentContext } from './context/ParentContext';
+import StudentMarks from './components/StudentMarks';
+import Semester1 from './results/Semester1';
 
 const App = () => {
   const { pToken } = useContext(ParentContext); // Context for authentication
@@ -32,6 +34,8 @@ const App = () => {
             <Route path="/announcement" element={<Announcement />} />
             <Route path="/semesterResult" element={<SemesterResult />} />
             <Route path="/feedback" element={<Feedback />} />
+            <Route path="/student-marks" element={<StudentMarks />} />
+            <Route path="/semester-1" element={<Semester1 />} />
             <Route path="*" element={<Navigate to="/home" />} />
           </Routes>
           </div>

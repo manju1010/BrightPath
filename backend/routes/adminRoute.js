@@ -7,8 +7,39 @@ import { getStudentDetails } from '../controllers/StudentDetailsController.js';
 import { predictDropout } from '../controllers/dropoutController.js';
 import { predictDropoutBasedOnSocialMedia } from '../controllers/socialmediaController.js';
 import { getAllStudentsPrediction } from '../controllers/academicController.js';
+import { getAllStudentsRecord } from '../controllers/getAllStudentsRecord.js';
+
+
+import upload from "../middlewares/multer.js"; // Updated Multer path
+import { uploadExcel } from "../controllers/studentParentController.js";
+import { getAttendance, markAttendance,updateAttendance ,deleteAttendance } from '../controllers/attendanceController.js';
 
 const adminRouter = express.Router();
+
+// attendance routes
+
+adminRouter.post('/attendance-post', markAttendance);
+adminRouter.get('/attendance-get', getAttendance);
+adminRouter.put('/attendance/:id', updateAttendance);
+adminRouter.delete('/attendance/:id', deleteAttendance);
+
+
+
+
+
+// adminRouter.post("/upload", upload.single("file"), uploadExcel);
+
+
+
+adminRouter.post("/upload", (req, res, next) => {
+  upload.single("file")(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({ error: err.message });
+    }
+    next();
+  });
+}, uploadExcel);
+
 
 // Public routea
 adminRouter.post('/login', loginAdmin);
@@ -26,6 +57,8 @@ adminRouter.post('/add-Marks',addMarks)
 adminRouter.get('/students', getStudentDetails);
 adminRouter.get("/predict/:rollno", predictDropout);
 // Add the new route for predicting dropout based on social media data
-adminRouter.get("/predict-dropout-social-media", predictDropoutBasedOnSocialMedia)
+adminRouter.get("/predict-socialmedia-dropout/:rollno", predictDropoutBasedOnSocialMedia)
+
+adminRouter.get("/get-all-students-record", getAllStudentsRecord)
 
 export default adminRouter;

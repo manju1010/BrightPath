@@ -1,31 +1,59 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from "react";
+import { ParentContext } from "../context/ParentContext"; // Import context
 
 const Dashboard = () => {
+  const { backendUrl, pToken } = useContext(ParentContext); // Use context for URL & token
   const [attendanceData, setAttendanceData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Local source of attendance data
-    const localData = [
-      { date: '2025-01-01', timeIn: '08:45', timeOut: '17:00', breakHours: '1', workingHours: '7', status: '' },
-      { date: '2025-01-02', timeIn: '09:15', timeOut: '17:00', breakHours: '1', workingHours: '7', status: '' },
-      { date: '2025-01-03', timeIn: '', timeOut: '', breakHours: '1', workingHours: '0', status: '' },
-      { date: '2025-01-04', timeIn: '09:00', timeOut: '17:00', breakHours: '1', workingHours: '7', status: '' },
-    ];
+    const fetchAttendance = async () => {
+      if (!pToken) {
+        setError("No authentication token found. Please log in.");
+        setLoading(false);
+        return;
+      }
 
-    const updatedData = localData.map((record) => ({
-      ...record,
-      status: record.timeIn ? (isLate(record.timeIn) ? 'Late' : 'Present') : 'Absent',
-    }));
+      try {
+        const response = await fetch(`${backendUrl}/parent/student-attendance`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            dtoken: pToken, // Use token from context
+          },
+        });
 
-    setAttendanceData(updatedData);
-  }, []);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
-  const isLate = (timeIn) => {
-    const allowedTime = new Date();
-    allowedTime.setHours(9, 0, 0); // Set allowed time to 9:00 AM
-    const checkTime = new Date(`1970-01-01T${timeIn}`);
-    return checkTime > allowedTime;
-  };
+        const data = await response.json();
+        console.log("API Response:", data); // Debugging log
+
+        if (data.success && data.attendance) {
+          const updatedData = data.attendance.map((record) => ({
+            date: record.date,
+            status: record.absent ? "Absent" : "Present", // Correctly map "absent" field
+          }));
+
+          setAttendanceData(updatedData);
+        } else {
+          throw new Error("Invalid response structure");
+        }
+      } catch (err) {
+        console.error("Fetch Error:", err); // Debugging log
+        setError("Error fetching attendance data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAttendance();
+  }, [backendUrl, pToken]); // Runs when backendUrl or pToken changes
+
+  if (loading) return <p>Loading attendance data...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="p-6 bg-gray-100 rounded-lg shadow-md">
@@ -34,26 +62,26 @@ const Dashboard = () => {
         <thead className="bg-gray-200">
           <tr>
             <th className="px-4 py-2 text-left">Date</th>
-            <th className="px-4 py-2 text-left">Time In</th>
-            <th className="px-4 py-2 text-left">Time Out</th>
-            <th className="px-4 py-2 text-left">Break Hours</th>
-            <th className="px-4 py-2 text-left">Working Hours</th>
-            <th className="px-4 py-2 text-left">Status (Absent/Present)</th>
+            <th className="px-4 py-2 text-left">Status</th>
           </tr>
         </thead>
         <tbody>
-          {attendanceData.map((record, index) => (
-            <tr key={index} className={`border-t ${record.status === 'Absent' ? 'bg-red-100' : ''}`}>
-              <td className="px-4 py-2">{record.date}</td>
-              <td className="px-4 py-2">{record.timeIn || '-'}</td>
-              <td className="px-4 py-2">{record.timeOut || '-'}</td>
-              <td className="px-4 py-2">{record.breakHours || '-'}</td>
-              <td className="px-4 py-2">{record.workingHours || '-'}</td>
-              <td className={`px-4 py-2 font-bold ${record.status === 'Present' ? 'text-green-500' : 'text-red-500'}`}>
-                {record.status}
+          {attendanceData.length > 0 ? (
+            attendanceData.map((record, index) => (
+              <tr key={index} className={`border-t ${record.status === "Absent" ? "bg-red-100" : ""}`}>
+                <td className="px-4 py-2">{record.date}</td>
+                <td className={`px-4 py-2 font-bold ${record.status === "Present" ? "text-green-500" : "text-red-500"}`}>
+                  {record.status}
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="2" className="px-4 py-2 text-center text-gray-500">
+                No attendance records found.
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>
