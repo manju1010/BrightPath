@@ -19,6 +19,7 @@ import Prediction from './pages/Prediction';
 import { FaFileUpload } from 'react-icons/fa';
 import FileUpload from './components/FileUpload';
 import AddButton from './pages/AddButton';
+import MarkExcelUpload from './pages/MarkExcelUpload';
 
 const App = () => {
   const { aToken } = useContext(AdminContext);
@@ -43,6 +44,7 @@ const App = () => {
             <Route path='/student-predict' element={<StudentPrediction /> } />
             <Route path='/student-all-prediction' element={<Prediction /> } />
             <Route path='/upload-excel-file' element={<FileUpload /> } />
+            <Route path='/upload-mark-excel-file' element={<MarkExcelUpload /> } />
            
           
             <Route path="*" element={<Navigate to="/adminPanel" />} />

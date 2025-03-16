@@ -58,8 +58,14 @@ const SideBar = () => {
                   </li>
                   <li onClick={()=> navigate('/upload-excel-file')} className="flex items-center p-3 mb-2 rounded-lg cursor-pointer hover:bg-blue-100 hover:text-blue-600">
                     <FontAwesomeIcon icon={faUsers} className="mr-3" />
-                   Excel-file upload 
+                    Student excel file upload
                   </li>
+
+                  <li onClick={()=> navigate('/upload-mark-excel-file')} className="flex items-center p-3 mb-2 rounded-lg cursor-pointer hover:bg-blue-100 hover:text-blue-600">
+                    <FontAwesomeIcon icon={faUsers} className="mr-3" />
+                  Mark excel file upload
+                  </li>
+
                 </ul>
               </nav>
             </aside>

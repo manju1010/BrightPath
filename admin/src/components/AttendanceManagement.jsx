@@ -10,42 +10,54 @@ const AttendanceManagement = () => {
   const [attendanceData, setAttendanceData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
 
+  const dummyStudents = [
+    { studentRegNo: "CSE001", studentName: "John Doe", isAbsent: false },
+    { studentRegNo: "CSE002", studentName: "Jane Smith", isAbsent: false },
+    { studentRegNo: "CSE003", studentName: "Alice Johnson", isAbsent: false },
+  ];
+
   useEffect(() => {
-    const sampleData = [
-      { id: "111622102093", name: "Rahul S", department: "CSE", section: "A", isAbsent: false },
-      { id: "111622102094", name: "Harry Potter", department: "ECE", section: "B", isAbsent: false },
-      { id: "111622102095", name: "John C", department: "CSE", section: "A", isAbsent: false },
-      { id: "12345", name: "John C", department: "CSE", section: "A", isAbsent: false },
-    ];
-    setAttendanceData(sampleData);
-    setFilteredData(sampleData);
-  }, []);
+    const fetchStudents = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:4000/api/students?department=${selectedDepartment}&section=${selectedSection}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch students");
+        }
+        const data = await response.json();
+        setAttendanceData(data);
+        setFilteredData(data);
+      } catch (error) {
+        console.error("Error fetching students:", error);
+        setAttendanceData(dummyStudents);
+        setFilteredData(dummyStudents);
+      }
+    };
+
+    fetchStudents();
+  }, [selectedDepartment, selectedSection]);
 
   const handleSearch = () => {
-    const filtered = attendanceData.filter(
-      (student) =>
-        student.department === selectedDepartment &&
-        student.section === selectedSection &&
-        student.id.endsWith(searchQuery)
+    const filtered = attendanceData.filter((student) =>
+      student.studentRegNo.endsWith(searchQuery)
     );
     setFilteredData(filtered);
   };
 
-  const markAbsent = async (studentId) => {
-    const student = attendanceData.find((s) => s.id === studentId);
+  const markAbsent = async (studentRegNo) => {
+    const student = attendanceData.find((s) => s.studentRegNo === studentRegNo);
     if (!student) return;
 
     const attendanceRecord = {
-      regno: student.id,
-      grade: student.department,
-      section: student.section,
+      regno: student.studentRegNo,
+      grade: selectedDepartment,
+      section: selectedSection,
       date: selectedDate.toISOString().split("T")[0],
       absent: true,
     };
-    console.log(attendanceRecord);
 
     try {
-      console.log(attendanceRecord);
       const response = await fetch("http://localhost:4000/api/admin/attendance-post", {
         method: "POST",
         headers: {
@@ -56,7 +68,7 @@ const AttendanceManagement = () => {
 
       if (response.ok) {
         const updatedData = attendanceData.map((s) =>
-          s.id === studentId ? { ...s, isAbsent: true } : s
+          s.studentRegNo === studentRegNo ? { ...s, isAbsent: true } : s
         );
         setAttendanceData(updatedData);
         setFilteredData(updatedData);
@@ -73,7 +85,36 @@ const AttendanceManagement = () => {
       <h1 className="text-2xl font-semibold text-center mb-6 text-blue-700">
         Attendance Management
       </h1>
+
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+        <label className="flex items-center gap-2">
+          <span className="font-medium text-gray-700">Department:</span>
+          <select
+            value={selectedDepartment}
+            onChange={(e) => setSelectedDepartment(e.target.value)}
+            className="border border-gray-300 rounded px-2 py-1"
+          >
+            <option value="CSE">CSE</option>
+            <option value="ECE">ECE</option>
+            <option value="EEE">EEE</option>
+            <option value="MECH">MECH</option>
+            <option value="CIVIL">CIVIL</option>
+          </select>
+        </label>
+
+        <label className="flex items-center gap-2">
+          <span className="font-medium text-gray-700">Section:</span>
+          <select
+            value={selectedSection}
+            onChange={(e) => setSelectedSection(e.target.value)}
+            className="border border-gray-300 rounded px-2 py-1"
+          >
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+          </select>
+        </label>
+
         <label className="flex items-center gap-2">
           <span className="font-medium text-gray-700">Search Student:</span>
           <input
@@ -84,6 +125,7 @@ const AttendanceManagement = () => {
             className="border border-gray-300 rounded px-2 py-1"
           />
         </label>
+
         <button
           onClick={handleSearch}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
@@ -91,6 +133,7 @@ const AttendanceManagement = () => {
           Search
         </button>
       </div>
+
       <div className="overflow-x-auto">
         <table className="table-auto border-collapse border w-full text-center text-sm">
           <thead className="bg-blue-100">
@@ -102,13 +145,13 @@ const AttendanceManagement = () => {
           </thead>
           <tbody>
             {filteredData.map((student) => (
-              <tr key={student.id} className="hover:bg-gray-50">
-                <td className="border border-gray-300 px-4 py-2">{student.id}</td>
-                <td className="border border-gray-300 px-4 py-2">{student.name}</td>
+              <tr key={student.studentRegNo} className="hover:bg-gray-50">
+                <td className="border border-gray-300 px-4 py-2">{student.studentRegNo}</td>
+                <td className="border border-gray-300 px-4 py-2">{student.studentName}</td>
                 <td className="border border-gray-300 px-4 py-2">
                   {!student.isAbsent ? (
                     <button
-                      onClick={() => markAbsent(student.id)}
+                      onClick={() => markAbsent(student.studentRegNo)}
                       className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700"
                     >
                       Mark Absent

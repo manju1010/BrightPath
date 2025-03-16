@@ -13,6 +13,8 @@ import { getAllStudentsRecord } from '../controllers/getAllStudentsRecord.js';
 import upload from "../middlewares/multer.js"; // Updated Multer path
 import { uploadExcel } from "../controllers/studentParentController.js";
 import { getAttendance, markAttendance,updateAttendance ,deleteAttendance } from '../controllers/attendanceController.js';
+import { uploadMarks } from '../controllers/marksControllerExcel.js';
+import { getStudents } from '../controllers/fetchstudentdetails.js.js';
 
 const adminRouter = express.Router();
 
@@ -24,6 +26,7 @@ adminRouter.put('/attendance/:id', updateAttendance);
 adminRouter.delete('/attendance/:id', deleteAttendance);
 
 
+adminRouter.get("/students", getStudents);
 
 
 
@@ -39,6 +42,9 @@ adminRouter.post("/upload", (req, res, next) => {
     next();
   });
 }, uploadExcel);
+
+
+adminRouter.post("/upload-marks", upload.single("file"), uploadMarks);
 
 
 // Public routea
