@@ -74,6 +74,7 @@ const PredictionTable = () => {
                         : student
                 )
             );
+            
         } catch (err) {
             setError(err.message);
             console.error("Error fetching predictions:", err.message);
@@ -141,7 +142,7 @@ const PredictionTable = () => {
                         <th className="border p-3">Student Name</th>
                         <th className="border p-3">Online Learning Prediction</th>
                         <th className="border p-3">Social Media Dropout Prediction</th>
-                        <th className="border p-3">Third Prediction</th>
+                        <th className="border p-3">Online prediction</th>
                         <th className="border p-3">Overall Prediction</th>
                         <th className="border p-3">Actions</th>
                     </tr>
@@ -151,36 +152,75 @@ const PredictionTable = () => {
                         <tr key={student.registerNumber} className="bg-white border hover:bg-gray-100">
                             <td className="border p-3">{student.registerNumber}</td>
                             <td className="border p-3">{student.name}</td>
-                            <td className="border p-3 text-center">
+<td className="border p-3 text-center">
     <span
         className={`px-4 py-1 text-sm font-semibold text-white rounded-full shadow-md ${
             student.onlineLearningPrediction === 'Not at Risk'
                 ? "bg-green-500"
                 : student.onlineLearningPrediction === 'At Risk'
                 ? "bg-red-500"
-                :  student.onlineLearningPrediction === '-'
-                ? "bg-gray-400" : "bg-green-500"
+                : student.onlineLearningPrediction === '-'
+                ? "bg-gray-400"
+                : "bg-green-500"
         }`}
     >
-        {student.onlineLearningPrediction || "Unknown"}
+        {student.onlineLearningPrediction}
     </span>
+
+    {student.onlineLearningPrediction === 'Not at Risk' && (
+        <div>
+            <ul className="list-disc ml-4">
+                <li>GPA is greater than  6.0, Attendance is greater than  60%, Study Hoursis greater than   5</li>
+            </ul>
+        </div>
+    )}
+
+    {student.onlineLearningPrediction === 'At Risk' && (
+        <div>
+            <ul className="list-disc ml-4">
+                <li>GPA &gt; 6.0, Attendance &ge; 60%, Study Hours &gt; 5</li>
+            </ul>
+        </div>
+    )}
 </td>
  <td className="border p-3 text-center">
-    <span
-        className={`px-4 py-1 text-sm font-semibold text-white rounded-full shadow-md ${
-            student.socialMediaPrediction === '0'
-                ? "bg-green-500"
-                : student.socialMediaPrediction === '1'
-                ? "bg-red-500"
-                : "bg-gray-400"
-        }`}
-    >
-        {student.socialMediaPrediction === '0'
-            ? "Not at Risk"
+ <div
+    className={`px-4 py-2 text-sm font-semibold text-white rounded-lg shadow-md ${
+        student.socialMediaPrediction === '0'
+            ? "bg-green-500"
             : student.socialMediaPrediction === '1'
-            ? "At Risk"
-            : "Unknown"}
-    </span>
+            ? "bg-red-500"
+            : "bg-gray-400"
+    }`}
+>
+    {student.socialMediaPrediction === '0' ? (
+        <div>
+            <p className="font-bold">Average Session Duration (Minutes):</p>
+            <ul className="list-disc ml-4">
+                <li>Instagram: 30 (Moderate Risk, 30-80)</li>
+                <li>Facebook: 20 (Low Risk, &lt; 30)</li>
+                <li>Twitter: 25 (Low Risk, &lt; 30)</li>
+                <li>Snapchat: 15 (Low Risk, &lt; 30)</li>
+                <li>LinkedIn: 12 (Low Risk, &lt; 30)</li>
+                <li>Other: 10 (Low Risk, &lt; 30)</li>
+            </ul>
+        </div>
+    ) : student.socialMediaPrediction === '1' ? (
+        <div>
+            <p className="font-bold">Activity Breakdown:</p>
+            <ul className="list-disc ml-4">
+                <li>Messaging: 450 (High Risk, &gt; 80)</li>
+                <li>Content Scrolling: 900 (High Risk, &gt; 80)</li>
+                <li>Posting: 150 (Moderate Risk, 30-80)</li>
+                <li>Studying: 250 (Moderate Risk, 30-80)</li>
+                <li>Other: 75 (Moderate Risk, 30-80)</li>
+            </ul>
+        </div>
+    ) : (
+        "Unknown"
+    )}
+</div>
+
 </td>
 
 
