@@ -3,10 +3,13 @@ import StudentParent from "../models/studentParentModel.js";
 export const getStudents = async (req, res) => {
   try {
     const { department, section } = req.query;
-    
-    const students = await StudentParent.find({ department, section }).select(
-      "studentRegNo studentName department section"
-    );
+
+    // Create a dynamic filter object
+    let filter = {};
+    if (department) filter.department = department.toUpperCase();
+    if (section) filter.section = section.toUpperCase();
+
+    const students = await StudentParent.find(filter);
 
     res.status(200).json(students);
   } catch (error) {

@@ -20,6 +20,11 @@ import { FaFileUpload } from 'react-icons/fa';
 import FileUpload from './components/FileUpload';
 import AddButton from './pages/AddButton';
 import MarkExcelUpload from './pages/MarkExcelUpload';
+import NotificationsPage from './pages/NotificationPage';
+import RollNumber from './components/Rollnumber';
+import OnlineLearningDetails from './components/OnlineLearningDetails';
+import SocialMediaDetails from './components/SocialMediaDetails';
+import StudentPredictions from './pages/StudentPredictions';
 
 const App = () => {
   const { aToken } = useContext(AdminContext);
@@ -45,6 +50,11 @@ const App = () => {
             <Route path='/student-all-prediction' element={<Prediction /> } />
             <Route path='/upload-excel-file' element={<FileUpload /> } />
             <Route path='/upload-mark-excel-file' element={<MarkExcelUpload /> } />
+            <Route path='/notification-panel' element={<NotificationsPage /> } />
+            <Route path='/rollnumber-upload' element={<RollNumber /> } />
+            <Route path='/online-learning-details' element={<OnlineLearningDetails /> } />
+            <Route path='/upload-socialMedia-details' element={<SocialMediaDetails /> } />
+            <Route path='/prediction-online' element={<StudentPredictions /> } />
            
           
             <Route path="*" element={<Navigate to="/adminPanel" />} />

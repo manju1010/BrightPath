@@ -26,6 +26,25 @@ const SideBar = () => {
                     <FontAwesomeIcon icon={faHome} className="mr-3" />
                     Dashboard
                   </li>
+                  <li onClick={()=> navigate('/rollnumber-upload')} className="flex items-center p-3 mb-2 rounded-lg cursor-pointer hover:bg-blue-100 hover:text-blue-600">
+                    <FontAwesomeIcon icon={faUsers} className="mr-3" />
+                 Student Details - upload
+                  </li>
+
+                  <li onClick={()=> navigate('/online-learning-details')} className="flex items-center p-3 mb-2 rounded-lg cursor-pointer hover:bg-blue-100 hover:text-blue-600">
+                    <FontAwesomeIcon icon={faUsers} className="mr-3" />
+                    Online Learning Details
+                  </li>
+                  <li onClick={()=> navigate('/upload-socialMedia-details')} className="flex items-center p-3 mb-2 rounded-lg cursor-pointer hover:bg-blue-100 hover:text-blue-600">
+                    <FontAwesomeIcon icon={faUsers} className="mr-3" />
+                    Upload SocialMedia Details
+                  </li>
+                  <li onClick={()=> navigate('/prediction-online')} className="flex items-center p-3 mb-2 rounded-lg cursor-pointer hover:bg-blue-100 hover:text-blue-600">
+                    <FontAwesomeIcon icon={faUsers} className="mr-3" />
+                    Prediction 
+                  </li>
+
+
                   <li onClick={()=> navigate('/add-button')} className="flex items-center p-3 mb-2 rounded-lg cursor-pointer hover:bg-blue-100 hover:text-blue-600">
                     <FontAwesomeIcon icon={faUsers} className="mr-3" />
                     Add Students
@@ -64,6 +83,11 @@ const SideBar = () => {
                   <li onClick={()=> navigate('/upload-mark-excel-file')} className="flex items-center p-3 mb-2 rounded-lg cursor-pointer hover:bg-blue-100 hover:text-blue-600">
                     <FontAwesomeIcon icon={faUsers} className="mr-3" />
                   Mark excel file upload
+                  </li>
+
+                  <li onClick={()=> navigate('/notification-panel')} className="flex items-center p-3 mb-2 rounded-lg cursor-pointer hover:bg-blue-100 hover:text-blue-600">
+                    <FontAwesomeIcon icon={faUsers} className="mr-3" />
+                  Notification Page
                   </li>
 
                 </ul>

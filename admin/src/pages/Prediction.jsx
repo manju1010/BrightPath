@@ -41,40 +41,27 @@ const PredictionTable = () => {
         try {
             console.log(`Fetching predictions for: ${registerNumber}`);
 
-            const [onlineResponse, socialMediaResponse, thirdResponse] = await Promise.all([
-                fetch(`http://localhost:4000/api/admin/predict/${registerNumber}`),
-                fetch(`http://localhost:4000/api/admin/predict-socialmedia-dropout/${registerNumber}`),
-                fetch(`http://localhost:4000/api/admin/predict/${registerNumber}`)
-            ]);
+            const response = await fetch(`http://localhost:4000/api/admin/predict/${registerNumber}`);
 
-            if (!onlineResponse.ok) {
-                throw new Error("Failed to fetch one or more predictions");
+            if (!response.ok) {
+                throw new Error("Failed to fetch predictions");
             }
 
-            const onlineData = await safeJsonParse(onlineResponse);
-            const socialMediaData = await safeJsonParse(socialMediaResponse);
-            const thirdData = await safeJsonParse(thirdResponse);
+            const data = await safeJsonParse(response);
 
-            console.log("Predictions for", registerNumber, {
-                online: onlineData,
-                socialMedia: socialMediaData,
-                third: thirdData
-            });
+            console.log("Predictions for", registerNumber, data);
 
             setStudents(prevStudents =>
                 prevStudents.map(student =>
                     student.registerNumber === registerNumber
                         ? {
                             ...student,
-                            onlineLearningPrediction: onlineData?.prediction || "N/A",
-                            socialMediaPrediction: socialMediaData?.prediction || "N/A",
-                            thirdPrediction: thirdData?.prediction || "N/A",
-                            overallPrediction: onlineData?.prediction || socialMediaData?.prediction || thirdData?.prediction || "N/A"
+                            onlineLearningPrediction: data?.prediction || "N/A",
+                            overallPrediction: data?.prediction || "N/A"
                         }
                         : student
                 )
             );
-            
         } catch (err) {
             setError(err.message);
             console.error("Error fetching predictions:", err.message);
@@ -91,26 +78,18 @@ const PredictionTable = () => {
             const updatedStudents = await Promise.all(
                 students.map(async (student) => {
                     console.log(`Fetching for student: ${student.registerNumber}`);
-                    const [onlineResponse, socialMediaResponse, thirdResponse] = await Promise.all([
-                        fetch(`http://localhost:4000/api/admin/predict/${student.registerNumber}`),
-                        fetch(`http://localhost:4000/api/admin/predict-socialmedia-dropout/${student.registerNumber}`),
-                        fetch(`http://localhost:4000/api/admin/predict/${student.registerNumber}`),
-                    ]);
+                    const response = await fetch(`http://localhost:4000/api/admin/predict/${student.registerNumber}`);
 
-                    if (!onlineResponse.ok) {
-                        throw new Error("Failed to fetch one or more predictions");
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch predictions");
                     }
 
-                    const onlineData = await safeJsonParse(onlineResponse);
-                    const socialMediaData = await safeJsonParse(socialMediaResponse);
-                    const thirdData = await safeJsonParse(thirdResponse);
+                    const data = await safeJsonParse(response);
 
                     return {
                         ...student,
-                        onlineLearningPrediction: onlineData?.prediction || "N/A",
-                        socialMediaPrediction: socialMediaData?.prediction || "N/A",
-                        thirdPrediction: thirdData?.prediction || "N/A",
-                        overallPrediction: onlineData?.prediction || socialMediaData?.prediction || thirdData?.prediction || "N/A"
+                        onlineLearningPrediction: data?.prediction || "N/A",
+                        overallPrediction: data?.prediction || "N/A"
                     };
                 })
             );
@@ -141,8 +120,6 @@ const PredictionTable = () => {
                         <th className="border p-3">Register Number</th>
                         <th className="border p-3">Student Name</th>
                         <th className="border p-3">Online Learning Prediction</th>
-                        <th className="border p-3">Social Media Dropout Prediction</th>
-                        <th className="border p-3">Online prediction</th>
                         <th className="border p-3">Overall Prediction</th>
                         <th className="border p-3">Actions</th>
                     </tr>
@@ -152,80 +129,7 @@ const PredictionTable = () => {
                         <tr key={student.registerNumber} className="bg-white border hover:bg-gray-100">
                             <td className="border p-3">{student.registerNumber}</td>
                             <td className="border p-3">{student.name}</td>
-<td className="border p-3 text-center">
-    <span
-        className={`px-4 py-1 text-sm font-semibold text-white rounded-full shadow-md ${
-            student.onlineLearningPrediction === 'Not at Risk'
-                ? "bg-green-500"
-                : student.onlineLearningPrediction === 'At Risk'
-                ? "bg-red-500"
-                : student.onlineLearningPrediction === '-'
-                ? "bg-gray-400"
-                : "bg-green-500"
-        }`}
-    >
-        {student.onlineLearningPrediction}
-    </span>
-
-    {student.onlineLearningPrediction === 'Not at Risk' && (
-        <div>
-            <ul className="list-disc ml-4">
-                <li>GPA is greater than  6.0, Attendance is greater than  60%, Study Hoursis greater than   5</li>
-            </ul>
-        </div>
-    )}
-
-    {student.onlineLearningPrediction === 'At Risk' && (
-        <div>
-            <ul className="list-disc ml-4">
-                <li>GPA &gt; 6.0, Attendance &ge; 60%, Study Hours &gt; 5</li>
-            </ul>
-        </div>
-    )}
-</td>
- <td className="border p-3 text-center">
- <div
-    className={`px-4 py-2 text-sm font-semibold text-white rounded-lg shadow-md ${
-        student.socialMediaPrediction === '0'
-            ? "bg-green-500"
-            : student.socialMediaPrediction === '1'
-            ? "bg-red-500"
-            : "bg-gray-400"
-    }`}
->
-    {student.socialMediaPrediction === '0' ? (
-        <div>
-            <p className="font-bold">Average Session Duration (Minutes):</p>
-            <ul className="list-disc ml-4">
-                <li>Instagram: 30 (Moderate Risk, 30-80)</li>
-                <li>Facebook: 20 (Low Risk, &lt; 30)</li>
-                <li>Twitter: 25 (Low Risk, &lt; 30)</li>
-                <li>Snapchat: 15 (Low Risk, &lt; 30)</li>
-                <li>LinkedIn: 12 (Low Risk, &lt; 30)</li>
-                <li>Other: 10 (Low Risk, &lt; 30)</li>
-            </ul>
-        </div>
-    ) : student.socialMediaPrediction === '1' ? (
-        <div>
-            <p className="font-bold">Activity Breakdown:</p>
-            <ul className="list-disc ml-4">
-                <li>Messaging: 450 (High Risk, &gt; 80)</li>
-                <li>Content Scrolling: 900 (High Risk, &gt; 80)</li>
-                <li>Posting: 150 (Moderate Risk, 30-80)</li>
-                <li>Studying: 250 (Moderate Risk, 30-80)</li>
-                <li>Other: 75 (Moderate Risk, 30-80)</li>
-            </ul>
-        </div>
-    ) : (
-        "Unknown"
-    )}
-</div>
-
-</td>
-
-
-
-                            <td className="border p-3 text-center">{student.thirdPrediction || "-"}</td>
+                            <td className="border p-3 text-center">{student.onlineLearningPrediction || "-"}</td>
                             <td className="border p-3 text-center">{student.overallPrediction || "-"}</td>
                             <td className="border p-3 text-center">
                                 <button
